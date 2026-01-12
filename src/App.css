@@ -1,38 +1,84 @@
-.App {
-  text-align: center;
+/* =========================
+   SWIPER MAIN
+========================= */
+.swiper {
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  overflow: hidden;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* =========================
+   SLIDE IMAGE - FULL FIT
+========================= */
+.swiper-slide {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+/* important */
+.swiper-slide > div {
+  width: 100%;
+  height: 100%;
+  background-size: cover !important; /* FULL IMAGE */
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+/* =========================
+   HEIGHT RESPONSIVE
+========================= */
+@media (max-width: 600px) {
+  .swiper {
+    height: 60vh;
   }
-  to {
-    transform: rotate(360deg);
+}
+
+@media (min-width: 601px) and (max-width: 900px) {
+  .swiper {
+    height: 70vh;
   }
+}
+
+@media (min-width: 901px) {
+  .swiper {
+    height: 80vh;
+  }
+}
+
+/* =========================
+   NAVIGATION ARROWS - ORANGE
+========================= */
+.swiper-button-next,
+.swiper-button-prev {
+  color: orange !important;
+}
+
+/* size responsive */
+@media (max-width: 600px) {
+  .swiper-button-next,
+  .swiper-button-prev {
+    transform: scale(0.0);
+  }
+}
+
+@media (min-width: 900px) {
+  .swiper-button-next,
+  .swiper-button-prev {
+    transform: scale(1.1);
+  }
+}
+
+/* =========================
+   PAGINATION DOTS - ORANGE
+========================= */
+.swiper-pagination-bullet {
+  background: orange !important;
+  opacity: 0.5;
+}
+
+.swiper-pagination-bullet-active {
+  background: orange !important;
+  opacity: 1;
 }

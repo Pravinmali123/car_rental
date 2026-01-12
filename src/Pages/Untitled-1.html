@@ -1,0 +1,680 @@
+// import React from 'react'
+import Layout from '../Components/Layout/Layout'
+
+import React, { useEffect } from "react";
+import ScrollReveal from "scrollreveal";
+import axios from "axios";
+import { Formik } from "formik";
+import * as Yup from "yup";
+
+import {
+  Box,
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Stack,
+  Paper,
+  CircularProgress,
+} from "@mui/material";
+
+import { Mail, Lock, Car } from "lucide-react";
+
+const Login = () => {
+  useEffect(() => {
+    ScrollReveal().reveal(".reveal-x-alt", {
+      origin: "right",
+      distance: "100px",
+      duration: 1500,
+      easing: "ease-in-out",
+      reset: false,
+    });
+  }, []);
+
+  // ✅ Yup Validation Schema
+  const validationSchema = Yup.object({
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
+    password: Yup.string()
+      .min(6, "Minimum 6 characters")
+      .required("Password is required"),
+  });
+
+  // ✅ API Call
+  const handleLogin = async (values, { setSubmitting, setErrors }) => {
+    try {
+      const res = await axios.post(
+        "https://example.com/api/login", // 🔴 YOUR API URL
+        values
+      );
+
+      // Example response: { token, user }
+      localStorage.setItem("token", res.data.token);
+
+      alert("Login Successful ✅");
+    } catch (error) {
+      setErrors({
+        email: "Invalid email or password",
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <Layout>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "linear-gradient(135deg, #a1a8b2ff, #1c1d21ff)",
+        px: 2,
+      }}
+    >
+      <Container maxWidth="sm">
+        {/* Logo */}
+        <Box textAlign="center" mb={3}>
+          <Stack direction="row" justifyContent="center" spacing={1}>
+            <Car size={36} color="white" />
+            <Typography variant="h4" fontWeight="bold" color="white">
+              AutoRent
+            </Typography>
+          </Stack>
+        </Box>
+
+        {/* Card */}
+        <Paper elevation={8} className="reveal-x-alt" sx={{ p: 4, borderRadius: 3 }}>
+          <Typography variant="h5" textAlign="center" fontWeight="bold">
+            Welcome Back
+          </Typography>
+          <Typography textAlign="center" color="text.secondary" mb={3}>
+            Sign in to your account
+          </Typography>
+
+          {/* ✅ Formik */}
+          <Formik
+            initialValues={{ email: "", password: "", remember: false }}
+            validationSchema={validationSchema}
+            onSubmit={handleLogin}
+          >
+            {({
+              values,
+              errors,
+              touched,
+              handleChange,
+              handleSubmit,
+              isSubmitting,
+            }) => (
+              <form onSubmit={handleSubmit}>
+                <Stack spacing={2}>
+                  <TextField
+                    fullWidth
+                    name="email"
+                    label="Email Address"
+                    value={values.email}
+                    onChange={handleChange}
+                    error={touched.email && Boolean(errors.email)}
+                    helperText={touched.email && errors.email}
+                    InputProps={{
+                      startAdornment: <Mail size={18} style={{ marginRight: 8 }} />,
+                    }}
+                  />
+
+                  <TextField
+                    fullWidth
+                    name="password"
+                    type="password"
+                    label="Password"
+                    value={values.password}
+                    onChange={handleChange}
+                    error={touched.password && Boolean(errors.password)}
+                    helperText={touched.password && errors.password}
+                    InputProps={{
+                      startAdornment: <Lock size={18} style={{ marginRight: 8 }} />,
+                    }}
+                  />
+
+                  <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          name="remember"
+                          checked={values.remember}
+                          onChange={handleChange}
+                        />
+                      }
+                      label="Remember me"
+                    />
+                    <Typography
+                      component="a"
+                      href="#"
+                      color="primary"
+                      fontSize={14}
+                      sx={{ textDecoration: "none" }}
+                    >
+                      Forgot password?
+                    </Typography>
+                  </Stack>
+
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    size="large"
+                    disabled={isSubmitting}
+                    sx={{ py: 1.2 }}
+                  >
+                    {isSubmitting ? (
+                      <CircularProgress size={24} color="inherit" />
+                    ) : (
+                      "Sign In"
+                    )}
+                  </Button>
+                </Stack>
+              </form>
+            )}
+          </Formik>
+
+            
+
+          <Typography textAlign="center" fontSize={14} mt={3}>
+            Don't have an account?{" "}
+            <Typography
+              component="a"
+              href="/register"
+              color="primary"
+              sx={{ textDecoration: "none", fontWeight: 500 }}
+            >
+              Sign up
+            </Typography>
+          </Typography>
+        </Paper>
+      </Container>
+    </Box>
+    </Layout>
+  );
+};
+
+export default Login;
+
+
+
+
+
+
+
+
+import React, { useEffect } from "react";
+import ScrollReveal from "scrollreveal";
+import Layout from '../Components/Layout/Layout'
+import {
+  Box,
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Grid,
+  Paper,
+  Checkbox,
+  FormControlLabel,
+  Divider,
+  Stack,
+} from "@mui/material";
+import { Facebook, Instagram, Car, User, Mail, Lock } from "lucide-react";
+
+const Register = () => {
+  useEffect(() => {
+    ScrollReveal().reveal(".reveal-x", {
+      origin: "left",
+      distance: "100px",
+      duration: 1500,
+      easing: "ease-in-out",
+      reset: false,
+    });
+  }, []);
+
+  return (
+     <Layout>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        background: "linear-gradient(135deg, #3b82f6, #1e40af)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        py: 6,
+      }}
+    >
+      <Container maxWidth="sm">
+        {/* Logo */}
+        <Stack alignItems="center" mb={3}>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <Car size={36} color="white" />
+            <Typography variant="h4" fontWeight="bold" color="white">
+              AutoRent
+            </Typography>
+          </Stack>
+        </Stack>
+
+        <Paper
+          elevation={6}
+          className="reveal-x"
+          sx={{ p: 4, borderRadius: 2 }}
+        >
+          {/* Heading */}
+          <Typography variant="h5" fontWeight="bold" textAlign="center">
+            Create Account
+          </Typography>
+          <Typography
+            variant="body2"
+            textAlign="center"
+            color="text.secondary"
+            mb={3}
+          >
+            Join thousands of happy customers
+          </Typography>
+
+          {/* Form */}
+          <Box component="form">
+            {/* Name */}
+            <Grid container spacing={2} mb={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  placeholder="First Name"
+                  InputProps={{
+                    startAdornment: <User size={18} style={{ marginRight: 8 }} />,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  placeholder="Last Name"
+                  InputProps={{
+                    startAdornment: <User size={18} style={{ marginRight: 8 }} />,
+                  }}
+                />
+              </Grid>
+            </Grid>
+
+            {/* Email */}
+            <TextField
+              fullWidth
+              label="Email Address"
+              margin="normal"
+              InputProps={{
+                startAdornment: <Mail size={18} style={{ marginRight: 8 }} />,
+              }}
+            />
+
+            {/* Password */}
+            <TextField
+              fullWidth
+              label="Password"
+              type="password"
+              margin="normal"
+              InputProps={{
+                startAdornment: <Lock size={18} style={{ marginRight: 8 }} />,
+              }}
+            />
+
+            {/* Remember / Forgot */}
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              justifyContent="space-between"
+              alignItems={{ sm: "center" }}
+              my={2}
+            >
+              <FormControlLabel
+                control={<Checkbox />}
+                label="Remember me"
+              />
+              <Typography
+                variant="body2"
+                color="primary"
+                sx={{ cursor: "pointer" }}
+              >
+                Forgot password?
+              </Typography>
+            </Stack>
+
+            <Button
+              fullWidth
+              variant="contained"
+              size="large"
+              sx={{ mt: 1 }}
+            >
+              Sign In
+            </Button>
+          </Box>
+
+          {/* Login Link */}
+          <Typography
+            textAlign="center"
+            variant="body2"
+            mt={3}
+          >
+            Don&apos;t have an account?{" "}
+            <Typography
+            //   component="span"
+                component="a"
+              href="/Login"
+              color="primary"
+              sx={{ cursor: "pointer" }}
+            >
+              Log in
+            </Typography>
+          </Typography>
+        </Paper>
+      </Container>
+    </Box>
+    </Layout>
+  );
+};
+
+export default Register;
+
+
+
+
+
+
+
+
+
+
+
+import React from "react";
+import Layout from "../Components/Layout/Layout";
+import {
+  Box,
+  Typography,
+  Button,
+  Paper,
+  Stack,
+} from "@mui/material";
+
+const Dashboard = ({ bookings, setBookings }) => {
+  const updateStatus = (index, status) => {
+    const updated = [...bookings];
+    updated[index].status = status;
+    setBookings(updated);
+  };
+
+  return (
+    <Layout>
+      <Box sx={{ p: 4 }}>
+        <Typography variant="h4" mb={4}>
+          Admin – Booking Requests
+        </Typography>
+
+        {bookings.length === 0 ? (
+          <Typography>No bookings found</Typography>
+        ) : (
+          bookings.map((b, i) => (
+            <Paper key={i} sx={{ p: 2, mb: 2 }}>
+              <Typography fontWeight="bold">
+                {b.carName}
+              </Typography>
+              <Typography>
+                Pickup: {b.pickup} | Return: {b.returnDate}
+              </Typography>
+              <Typography>Status: {b.status}</Typography>
+
+              {b.status === "Pending" && (
+                <Stack direction="row" spacing={2} mt={2}>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={() =>
+                      updateStatus(i, "Approved")
+                    }
+                  >
+                    Approve
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() =>
+                      updateStatus(i, "Rejected")
+                    }
+                  >
+                    Reject
+                  </Button>
+                </Stack>
+              )}
+            </Paper>
+          ))
+        )}
+      </Box>
+    </Layout>
+  );
+};
+
+export default Dashboard;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Box, Typography, Button, Container,Paper,
+  Stack, } from '@mui/material';
+
+const Dashboard = ({ bookings, setBookings }) => {
+  const navigate = useNavigate();
+
+  // Check if user is logged in
+  useEffect(() => {
+    const isAuthenticated = localStorage.getItem("isAuthenticated");
+    if (!isAuthenticated) {
+      navigate("/login");
+    }
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
+
+  const user = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
+
+    const updateStatus = (index, status) => {
+    const updated = [...bookings];
+    updated[index].status = status;
+    setBookings(updated);
+  };
+
+  return (
+    <Container maxWidth="lg">
+      <Box
+        sx={{
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          textAlign: "center",
+        }}
+      >
+        <Typography variant="h2" gutterBottom>
+          Dashboard
+        </Typography>
+        <Typography variant="h5" color="text.secondary" mb={4}>
+          Welcome, {user.email || "User"}!
+        </Typography>
+
+ <Box sx={{ p: 4 }}>
+        <Typography variant="h4" mb={4}>
+          Admin – Booking Requests
+        </Typography>
+
+        {bookings.length === 0 ? (
+          <Typography>No bookings found</Typography>
+        ) : (
+          bookings.map((b, i) => (
+            <Paper key={i} sx={{ p: 2, mb: 2 }}>
+              <Typography fontWeight="bold">
+                {b.carName}
+              </Typography>
+              <Typography>
+                Pickup: {b.pickup} | Return: {b.returnDate}
+              </Typography>
+              <Typography>Status: {b.status}</Typography>
+
+              {b.status === "Pending" && (
+                <Stack direction="row" spacing={2} mt={2}>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={() =>
+                      updateStatus(i, "Approved")
+                    }
+                  >
+                    Approve
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() =>
+                      updateStatus(i, "Rejected")
+                    }
+                  >
+                    Reject
+                  </Button>
+                </Stack>
+              )}
+            </Paper>
+          ))
+        )}
+      </Box>
+
+        <Button
+          variant="contained"
+          color="error"
+          size="large"
+          onClick={handleLogout}
+        >
+          Logout
+        </Button>
+      </Box>
+    </Container>
+  );
+};
+
+export default Dashboard;
+
+
+
+
+
+
+
+
+
+
+
+
+
+ {
+    id: 3,
+    name: "TOYATA X5",
+    year: 2023,
+    location: "Mumbai",
+    seats: 7,
+    transmission: "Automatic",
+    fuel: "Petrol",
+    price: 2100,
+    rating: 4.6,
+    status: "Available",
+    image: "/toyata.jpg",
+  },
+  {
+    id: 4,
+    name: "KIA x1",
+    year: 2024,
+    location: "Vadodara",
+    seats: 7,
+    transmission: "Automatic",
+    fuel: "Petrol",
+    price: 3000,
+    rating: 4.3,
+    status: "Available",
+    image: "/kia.jpg",
+  },
+  {
+    id: 5,
+    name: "FORD y3",
+    year: 2025,
+    location: "Amedabad",
+    seats: 7,
+    transmission: "Automatic",
+    fuel: "Petrol",
+    price: 4000,
+    rating: 4.9,
+    status: "Available",
+    image: "/ford.jpg",
+  },
+   {
+    id: 6,
+    name: "AUDI model 3",
+    year: 2025,
+    location: "Palanpur",
+    seats: 7,
+    transmission: "Automatic",
+    fuel: "Petrol",
+    price: 5000,
+    rating: 5.0,
+    status: "Available",
+    image: "/audi.jpg",
+  },
+   {
+    id: 7,
+    name: "EV car",
+    year: 2024,
+    location: "Surat",
+    seats: 5,
+    transmission: "Automatic",
+    fuel: "EV",
+    price: 3000,
+    rating: 4.9,
+    status: "Available",
+    image: "/ev1.jpg",
+  },
+   {
+    id: 8,
+    name: "HONDA y3",
+    year: 2020,
+    location: "Amedabad",
+    seats: 4,
+    transmission: "Automatic",
+    fuel: "CNG",
+    price: 3100,
+    rating: 4.9,
+    status: "Available",
+    image: "/cng1.jpg",
+  },
