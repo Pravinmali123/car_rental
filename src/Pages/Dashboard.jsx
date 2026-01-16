@@ -12,7 +12,7 @@ import {
   Divider,
   IconButton,
   Toolbar,
-  Button
+  // Button
 } from '@mui/material';
 import {
   Dashboard,
@@ -32,8 +32,7 @@ import { Car } from "lucide-react";
 const drawerWidth = 260;
 
 const menuItems = [
-  { id: 'dashboard', label: 'Dashboard', icon: Dashboard, labelGuj: 'Dashboard', path: '/dashboard' },
-  { id: 'cars', label: 'Manage Cars', icon: DirectionsCar, labelGuj: 'Cars Manage', path: '/dashboard/managecars' },
+  { id: 'dashboard', label: 'Dashboard', icon: Dashboard, labelGuj: 'Dashboard', path: '/dashboard/DashboardHome' },
   { id: 'bookings', label: 'Bookings', icon: CalendarMonth, labelGuj: 'Booking Manage', path: '/dashboard/managebookings' },
   { id: 'addcars', label: 'Add Cars', icon: DirectionsCar, labelGuj: 'Add Cars', path: '/dashboard/add-cars' },
   { id: 'payments', label: 'Payments', icon: Payments, labelGuj: 'Payment', path: '/dashboard/payments' },

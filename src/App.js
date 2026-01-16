@@ -13,46 +13,63 @@ import Dashboard from "./Pages/Dashboard";
 
 import DashboardLayout from "./Components/Layout/Dashboardlayout";
 import DashboardHome from "./Dashboard/Dashbordhome";
-import ManageCars from "./Dashboard/ManageCars";
 import Managebooking from "./Dashboard/Managebooking";
 import AddCars from "./Dashboard/Addcar";
 import Payments from "./Dashboard/Payment";
 import Settings from "./Dashboard/Setting";
 
-
 function App() {
-  // localStorage thi user get karo on initial load
+  // ✅ USER (refresh safe)
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
-  const [bookings, setBookings] = useState([]);
+  // ✅ BOOKINGS (GLOBAL & refresh safe)
+  const [bookings, setBookings] = useState(() => {
+    const savedBookings = localStorage.getItem("bookings");
+    return savedBookings ? JSON.parse(savedBookings) : [];
+  });
 
-  // Logout function
-  const handleLogout = () => {
-     setUser(null);
-    localStorage.removeItem("user");
-    localStorage.removeItem("loggedInUser");
-    localStorage.removeItem("isAuthenticated");
-    
-    // Home page par jav ane reload karo
-    window.location.href = "/";
-  };
+  // ✅ Persist bookings
+  useEffect(() => {
+    localStorage.setItem("bookings", JSON.stringify(bookings));
+  }, [bookings]);
 
-  // User change thay tyare localStorage update karo 
+  // ✅ Persist user
   useEffect(() => {
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
     }
   }, [user]);
 
+  // ✅ Logout
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem("user");
+    localStorage.removeItem("loggedInUser");
+    localStorage.removeItem("isAuthenticated");
+    // ⚠️ bookings intentionally NOT removed
+    window.location.href = "/";
+  };
+  const cancelBooking = (bookingId) => {
+  setBookings((prev) =>
+    prev.map((b) =>
+      b.id === bookingId
+        ? { ...b, status: "Cancelled" }
+        : b
+    )
+  );
+};
+
+
   return (
     <BrowserRouter>
       <Routes>
-        <Route 
-          path="/" 
-          element={<Home user={user} onLogout={handleLogout} />} 
+        {/* Public Pages */}
+        <Route
+          path="/"
+          element={<Home user={user} onLogout={handleLogout} />}
         />
 
         <Route
@@ -70,52 +87,66 @@ function App() {
         <Route
           path="/booking"
           element={
-            <Booking 
-              user={user} 
-              onLogout={handleLogout}
-              bookings={bookings} 
-            />
-          }
-        />
-
-        <Route
-          path="/login"
-          element={<Login setUser={setUser} />}
-        />
-
-        <Route
-          path="/dashboard"
-          element={
-            <Dashboard
+            <Booking
               user={user}
               onLogout={handleLogout}
               bookings={bookings}
-              setBookings={setBookings}
+              cancelBooking={cancelBooking}
             />
           }
         />
 
-  <Route path="/dashboard" element={<DashboardLayout />}>
-  <Route index element={<DashboardHome />} />
-  <Route path="managecars" element={<ManageCars />} />
-  <Route path="managebookings" element={<Managebooking  bookings={bookings} setBookings={setBookings}/>}/>
-  <Route path="add-cars" element={<AddCars />} />
-  <Route path="payments" element={<Payments />} />
-  <Route path="settings" element={<Settings />} />
-</Route>
 
+        <Route path="/login" element={<Login setUser={setUser} />} />
         <Route path="/register" element={<Register />} />
-        
-        <Route 
-          path="/search" 
-          element={<Search user={user} onLogout={handleLogout} />} 
-        />
-        
-        <Route 
-          path="/menu" 
-          element={<Menu user={user} onLogout={handleLogout} />} 
+
+        <Route
+          path="/search"
+          element={<Search user={user} onLogout={handleLogout} />}
         />
 
+        <Route
+          path="/menu"
+          element={<Menu user={user} onLogout={handleLogout} />}
+        />
+
+        {/* Dashboard Layout (Nested Routes) */}
+        <Route
+          path="/dashboard"
+          element={
+            <DashboardLayout
+              user={user}
+              onLogout={handleLogout}
+            />
+          }
+        >
+          <Route
+            index
+            element={
+              <Dashboard
+                user={user}
+                bookings={bookings}
+                setBookings={setBookings}
+              />
+            }
+          />
+          <Route path="DashboardHome" element={<DashboardHome />} />
+          
+          <Route
+            path="managebookings"
+            element={
+              <Managebooking
+                bookings={bookings}
+                setBookings={setBookings}
+              />
+            }
+          />
+          <Route path="add-cars" element={<AddCars />} />
+          <Route path="payments" element={<Payments />} />
+          <Route path="settings" element={<Settings />} />
+        </Route>
+
+        {/* 404 */}
         <Route path="*" element={<Pagenotfound />} />
       </Routes>
     </BrowserRouter>

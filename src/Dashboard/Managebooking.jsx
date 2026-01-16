@@ -29,7 +29,16 @@ const Managebooking = ({ bookings = [], setBookings }) => {
           bookings.map((b, i) => (
             <Paper key={i} sx={{ p: 2, mb: 2 }}>
               <Typography fontWeight="bold">
-                {b.carName || 'N/A'}
+                {b.car_name || 'N/A'}
+              </Typography>
+                                          <Typography>
+                Name: {b.name || 'N/A'}
+              </Typography>
+                            <Typography>
+              Mobile: {b.mobile || 'N/A'}
+              </Typography>
+                                          <Typography>
+               Email: {b.email || 'N/A'}
               </Typography>
               <Typography>
                 Pickup: {b.pickup || 'N/A'} | Return: {b.returnDate || 'N/A'}
