@@ -22,8 +22,13 @@ import {
   Cog,
   Fuel,
   Star,
-  NotebookText,
+  // NotebookText,
   LifeBuoy,
+    User,
+  IdCard,
+  FileText,
+  ShieldCheck,
+  BookOpen,
 } from "lucide-react";
 
 import { useLocation, useNavigate } from "react-router-dom";
@@ -39,35 +44,92 @@ const Cars = ({ user, onLogout }) => {
   const [open, setOpen] = useState(false);
   const [selectedCar, setSelectedCar] = useState(null);
 
-  const token = "jRJivHXvU6JgsB9y";
+  const token = "MjaxytJgh0X2hQxH";
 
   // ✅ Load cars + sync booking status
-  useEffect(() => {
-    axios
-      .get("https://generateapi.techsnack.online/api/caradd", {
-        headers: { Authorization: token },
-      })
-      .then((res) => {
-        let apiCars = res.data.Data || [];
+useEffect(() => {
+  axios
+    .get("https://generateapi.techsnack.online/api/autocar", {
+      headers: {
+        Authorization: token,
+      },
+    })
+    .then((res) => {
+      const apiCars = res.data.Data || [];
 
-        // 🔥 Sync with approved bookings (refresh safe)
-        const bookings =
-          JSON.parse(localStorage.getItem("bookings")) || [];
+      const bookings =
+        JSON.parse(localStorage.getItem("bookings")) || [];
 
-        const updatedCars = apiCars.map((car) => {
-          const approvedBooking = bookings.find(
-            (b) =>
-              b.carId === car._id && b.status === "Approved"
-          );
-          return approvedBooking
-            ? { ...car, status: "Booked" }
-            : { ...car, status: car.status || "Available" };
-        });
+      // 🔴 ⬇️⬇️ આ code HERE paste કરો ⬇️⬇️
+      const updatedCars = apiCars.map((car) => {
+        const approvedBooking = bookings.find(
+          (b) =>
+            b.carId === car._id && b.status === "Approved"
+        );
 
-        setCars(updatedCars);
-      })
-      .catch((err) => console.error(err));
-  }, []);
+        return approvedBooking
+          ? {
+              ...car,
+              status: "Booked",
+              bookedTill: approvedBooking.endDate,
+              waitingList: approvedBooking.waitingList || [],
+            }
+          : {
+              ...car,
+              status: car.status || "Available",
+              waitingList: [],
+            };
+      });
+
+      setCars(updatedCars);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+}, []);
+
+
+
+const handleWaitingList = (car) => {
+   if (!user) {
+    navigate("/login");
+    return;
+  }
+  const bookings =
+    JSON.parse(localStorage.getItem("bookings")) || [];
+
+  const bookingIndex = bookings.findIndex(
+    (b) => b.carId === car._id && b.status === "Approved"
+  );
+
+  if (bookingIndex === -1) return;
+
+  const waitingList =
+    bookings[bookingIndex].waitingList || [];
+
+  const alreadyAdded = waitingList.includes(user.name);
+
+  if (!alreadyAdded) {
+    waitingList.push(user.name);
+    bookings[bookingIndex].waitingList = waitingList;
+    localStorage.setItem("bookings", JSON.stringify(bookings));
+  }
+
+  // ✅ ONLY now show waiting list
+  setShowWaitingFor(car._id);
+
+  // UI update
+  setCars((prev) =>
+    prev.map((c) =>
+      c._id === car._id
+        ? { ...c, waitingList }
+        : c
+    )
+  );
+};
+  const [showWaitingFor, setShowWaitingFor] = useState(null);
+
+
 
   // ✅ Filter cars
   const filteredCars = cars.filter((car) => {
@@ -128,6 +190,7 @@ const Cars = ({ user, onLogout }) => {
               </Typography>
             ) : (
               filteredCars.map((car) => {
+                console.log("IMAGE:", car.image);
                 const isBooked = car.status === "Booked";
 
                 return (
@@ -137,14 +200,17 @@ const Cars = ({ user, onLogout }) => {
                   >
                     <Card sx={{ borderRadius: 3 }}>
                       <Box sx={{ position: "relative" }}>
-                        <CardMedia
-                          component="img"
-                          height="220"
-                          image={car.image}
-                          onError={(e) =>
-                            (e.target.src = "/no-car.png")
-                          }
-                        />
+   <CardMedia
+  component="img"
+  height="220"
+  sx={{ objectFit: "cover" }}
+  image={car.image || "/no-car.png"}
+  onError={(e) => {
+    e.target.src = "/no-car.png";
+  }}
+/>
+
+
 
                         <Box
                           sx={{
@@ -165,7 +231,14 @@ const Cars = ({ user, onLogout }) => {
                           {isBooked
                             ? "Booked"
                             : "Available"}
+
+                                                    {isBooked && (
+  <Typography color="white" fontSize={10} mt={0.3}>
+    Last Date: {car.bookedTill}
+  </Typography>
+)}
                         </Box>
+
                       </Box>
 
                       <CardContent>
@@ -185,28 +258,34 @@ const Cars = ({ user, onLogout }) => {
                               color="gold"
                             />
                             <Typography>
-                              {car.rating}
+                              {/* {car.rating} */}
                             </Typography>
                           </Stack>
                         </Stack>
-
-                        <Typography fontSize={14}>
-                          <MapPin size={14} />{" "}
-                          {car.location}
+                        <Stack direction="row" justifyContent="space-between" mt={1}>
+                         <Typography fontSize={15}>
+                          <User size={15} />{" "}
+                          {car.car_owner}
                         </Typography>
 
+                        <Typography fontSize={15}>
+                          <MapPin size={15} />{" "}
+                          {car.location}
+                        </Typography>
+                        </Stack>
                         <Stack
                           direction="row"
                           spacing={2}
-                          mt={1}
-                          flexWrap="wrap"
+
+                          mt={2}
+                          flexWrap="wrap" 
                         >
                           <Typography fontSize={13}>
                             <Users size={14} />{" "}
                             {car.seats}
                           </Typography>
                           <Typography fontSize={13}>
-                            <Cog size={14} />{" "}
+                            <Cog size={14} />{""}
                             {car.transmission}
                           </Typography>
                           <Typography fontSize={13}>
@@ -219,11 +298,27 @@ const Cars = ({ user, onLogout }) => {
                               "No Driver"}
                           </Typography>
                           <Typography fontSize={13}>
-                            <NotebookText size={14} />{" "}
+                            <ShieldCheck size={14} />{" "}
                             {car.insurance ||
                               "No Insurance"}
                           </Typography>
+
+                            <Typography fontSize={13}>
+                            <BookOpen size={14} />{" "}
+                            {car.rc_book ||
+                              "No RC Book"}
+                          </Typography>
+                          <Typography fontSize={13}>
+                            <FileText size={14} />{" "}
+                            {car.puc || "No PUC"}
+                          </Typography>
+                          <Typography fontSize={13}>
+                            <IdCard size={14} />{" "}
+                            {car.driving_license ||
+                              "No Driving License"}
+                          </Typography>
                         </Stack>
+                        
 
                         <Typography
                           mt={2}
@@ -250,7 +345,34 @@ const Cars = ({ user, onLogout }) => {
                             ? "Booked"
                             : "Book Now"}
                         </Button>
+                        {isBooked && (
+  <Button
+    fullWidth
+    sx={{ mt: 1 }}
+    variant="outlined"
+    color="warning"
+    onClick={() => handleWaitingList(car)}
+  >
+    Join Waiting List
+  </Button>
+)}
+
                       </CardContent>
+{showWaitingFor === car._id &&
+  car.waitingList?.length > 0 && (
+    <Box mt={2} px={2} pb={2} bgcolor="#f0f0f0" borderRadius={2}>
+      <Typography fontWeight="bold" fontSize={14}>
+        Waiting List:
+      </Typography>
+      {car.waitingList.map((name, index) => (
+        <Typography key={index} fontSize={13}>
+          • {name}
+        </Typography>
+      ))}
+    </Box>
+  )}
+
+
                     </Card>
                   </Grid>
                 );

@@ -36,6 +36,13 @@ const Booknow = ({ open, onClose, selectedCar, onConfirm, user }) => {
       alert("Please fill all details");
       return;
     }
+    const startDate = new Date(values.pickup);
+    const endDate = new Date(values.returnDate);
+    if (endDate <= startDate) {
+      alert("Return date must be after pickup date");
+      return;
+    }
+
 
     // ✅ Send booking data to Cars.jsx
     onConfirm({
@@ -49,7 +56,12 @@ const Booknow = ({ open, onClose, selectedCar, onConfirm, user }) => {
       pickup: values.pickup,
       pickupTime: values.pickupTime,
       returnDate: values.returnDate,
-      status: "Pending", // ✅ Correct flow
+  endDate: values.returnDate,
+      paymentStatus: "Unpaid", // or "Paid"
+      paymentMode: "",          // Cash / Online
+     status: "Pending", // ✅ Correct flow
+       
+       waitingList: []
     });
 
     alert("Booking sent for approval");

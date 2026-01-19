@@ -26,9 +26,9 @@ const Booking = ({ user, onLogout }) => {
     );
 
     setBookings(userBookings);
-  }, [user?.email]); // 🔥 important dependency
+  }, [user?.email]);
 
-  // ✅ Cancel booking (only own)
+  // ❌ Cancel booking
   const cancelBooking = (id) => {
     const all =
       JSON.parse(localStorage.getItem("bookings")) || [];
@@ -36,8 +36,47 @@ const Booking = ({ user, onLogout }) => {
     const updated = all.filter((b) => b.id !== id);
 
     localStorage.setItem("bookings", JSON.stringify(updated));
-
     setBookings((prev) => prev.filter((b) => b.id !== id));
+  };
+
+  //  CASH PAYMENT
+  const handleCashPayment = (id) => {
+    // const all =
+    //   JSON.parse(localStorage.getItem("bookings")) || [];
+
+    // const updated = all.map((b) =>
+    //   b.id === id
+    //     ? {
+    //         ...b,
+    //         paymentStatus: "Cash",
+    //         paymentMode: "Cash",
+    //       }
+    //     : b
+    // );
+
+    // localStorage.setItem("bookings", JSON.stringify(updated));
+    // setBookings(updated.filter((b) => b.userEmail === user.email));
+  };
+
+  //  ONLINE PAYMENT (Dummy – Razorpay later)
+  const handleOnlinePayment = (id) => {
+    // alert("Redirecting to online payment...");
+
+    // const all =
+    //   JSON.parse(localStorage.getItem("bookings")) || [];
+
+    // const updated = all.map((b) =>
+    //   b.id === id
+    //     ? {
+    //         ...b,
+    //         paymentStatus: "Paid",
+    //         paymentMode: "Online",
+    //       }
+    //     : b
+    // );
+
+    // localStorage.setItem("bookings", JSON.stringify(updated));
+    // setBookings(updated.filter((b) => b.userEmail === user.email));
   };
 
   return (
@@ -82,6 +121,7 @@ const Booking = ({ user, onLogout }) => {
 
               <Typography>Status: {b.status}</Typography>
 
+              {/*  Pending → Cancel */}
               {b.status === "Pending" && (
                 <Button
                   variant="contained"
@@ -92,6 +132,47 @@ const Booking = ({ user, onLogout }) => {
                   Cancel Booking
                 </Button>
               )}
+
+              {/* ✅ Approved → Payment Buttons */}
+              {b.status === "Approved" &&
+                b.paymentStatus !== "Paid" && (
+                  <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
+                    <Button
+                      variant="contained"
+                      color="success"
+                      onClick={() =>
+                        handleCashPayment(b.id)
+                      }
+                    >
+                      Pay Cash
+                    </Button>
+
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() =>
+                        handleOnlinePayment(b.id)
+                      }
+                    >
+                      Pay Now
+                    </Button>
+                  </Box>
+                )}
+
+              {/* ✅ Paid */}
+         {/* {b.paymentStatus === "Paid" &&
+  b.paymentMode === "Online" && (
+    <Typography
+      sx={{
+        mt: 2,
+        color: "green",
+        fontWeight: "bold",
+      }}
+    >
+      Payment Done (Online)
+    </Typography>
+)} */}
+
             </Paper>
           ))
         )}

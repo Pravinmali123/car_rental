@@ -24,13 +24,18 @@ const validationSchema = Yup.object({
   transmission: Yup.string().required("Required"),
   fuel: Yup.string().required("Required"),
   price: Yup.number().required("Required"),
-  rating: Yup.number().required("Required"),
+  // rating: Yup.number().required("Required"),
   driver: Yup.string().required("Required"),
   insurance: Yup.string().required("Required"),
+  rc_book: Yup.string().required("Required"),
+  puc: Yup.string().required("Required"),
+  driving_license: Yup.string().required("Required"),
+
 });
 
 const Addcar = () => {
-  const token = "jRJivHXvU6JgsB9y";
+  const token = "MjaxytJgh0X2hQxH";
+// MjaxytJgh0X2hQxH
   const admin = JSON.parse(localStorage.getItem("loggedInUser"));
 
   const [cars, setCars] = useState([]);
@@ -39,27 +44,33 @@ const Addcar = () => {
 
   const [initialValues, setInitialValues] = useState({
     car_name: "",
+    car_owner: admin?.email || "",
     year: "",
     location: "",
     seats: "",
     transmission: "",
     fuel: "",
     price: "",
-    rating: "",
+    // rating: "",
     driver: "",
     insurance: "",
+    rc_book: "",
+    puc: "",
+    driving_license: "",
+    image: null,
   });
 
-  // 🔥 GET CARS
+  //  GET CARS
 const dataView = () => {
  axios
-  .get("https://generateapi.techsnack.online/api/caradd", {
+  .get("https://generateapi.techsnack.online/api/autocar", {
     headers: { Authorization: token },
   })
   .then((res) => {
     setCars(res.data.Data || []);
   })
   .catch((error) => {
+    console.error(error.response?.data || error.message);
     if (error.response?.status === 404) {
       setCars([]); // no data yet
     } else {
@@ -89,21 +100,29 @@ const dataView = () => {
     // 🔁 UPDATE
     if (editId) {
  axios.patch(
-  `https://generateapi.techsnack.online/api/caradd/${editId}`,
+  `https://generateapi.techsnack.online/api/autocar/${editId}`,
   {
     car_name: values.car_name,
+    car_owner: values.car_owner,
     year: values.year,
     location: values.location,
     seats: values.seats,
     transmission: values.transmission,
     fuel: values.fuel,
     price: values.price,
-    rating: values.rating,
+    // rating: values.rating,
     driver: values.driver,
     insurance: values.insurance,
+    rc_book: values.rc_book,
+    puc: values.puc,
+    driving_license: values.driving_license,
+    image: image,
+
   },
   {
-    headers: { Authorization: token },
+    headers: { Authorization: token,
+              "Content-Type": "multipart/form-data"
+     },
   }
 )
 
@@ -120,12 +139,12 @@ const dataView = () => {
     else {
       axios
         .post(
-          "https://generateapi.techsnack.online/api/caradd",
+          "https://generateapi.techsnack.online/api/autocar",
           formData,
           {
             headers: {
               Authorization: token,
-              // "Content-Type": "multipart/form-data",
+              "Content-Type": "multipart/form-data",
             },
           }
         )
@@ -134,7 +153,7 @@ const dataView = () => {
           const newCar = {
             ...res.data.Data,
             adminEmail: admin.email,
-          };
+          };  
 
           const stored =
             JSON.parse(localStorage.getItem("adminCars")) || [];
@@ -156,7 +175,7 @@ const dataView = () => {
   // 🗑 DELETE
   const handleDelete = (id) => {
   axios.delete(
-  `https://generateapi.techsnack.online/api/caradd/${id}`,
+  `https://generateapi.techsnack.online/api/autocar/${id}`,
   {
     headers: { Authorization: token },
   }
@@ -189,17 +208,18 @@ const dataView = () => {
       >
         {({ values, handleChange, errors, touched }) => (
           <Form encType="multipart/form-data">
-            <TextField fullWidth margin="normal" label="Car Name" name="car_name" value={values.car_name} onChange={handleChange} />
+            <TextField fullWidth margin="normal" type="text" label="Car Name" name="car_name" value={values.car_name} onChange={handleChange} />
+            <TextField fullWidth margin="normal" type="text" label="Car Owner" name="car_owner" value={values.car_owner} onChange={handleChange} />
             <TextField fullWidth margin="normal" label="Year" name="year" type="number" value={values.year} onChange={handleChange} />
-            <TextField fullWidth margin="normal" label="Location" name="location" value={values.location} onChange={handleChange} />
+            <TextField fullWidth margin="normal" label="Location" name="location" type="text" value={values.location} onChange={handleChange} />
             <TextField fullWidth margin="normal" label="Seats" name="seats" type="number" value={values.seats} onChange={handleChange} />
 
-            <TextField select fullWidth margin="normal" name="transmission" value={values.transmission} onChange={handleChange}>
+            <TextField select fullWidth margin="normal" type="text" label="Transmission" name="transmission" value={values.transmission} onChange={handleChange}>
               <MenuItem value="Automatic">Automatic</MenuItem>
               <MenuItem value="Manual">Manual</MenuItem>
             </TextField>
 
-            <TextField select fullWidth margin="normal" name="fuel" value={values.fuel} onChange={handleChange}>
+            <TextField select fullWidth margin="normal" type="text" label="Fuel Type" name="fuel" value={values.fuel} onChange={handleChange}>
               <MenuItem value="Petrol">Petrol</MenuItem>
               <MenuItem value="Diesel">Diesel</MenuItem>
               <MenuItem value="CNG">CNG</MenuItem>
@@ -207,19 +227,31 @@ const dataView = () => {
             </TextField>
 
             <TextField fullWidth margin="normal" label="Price" name="price" type="number" value={values.price} onChange={handleChange} />
-            <TextField fullWidth margin="normal" label="Rating" name="rating" type="number" value={values.rating} onChange={handleChange} />
+            {/* <TextField fullWidth margin="normal" label="Rating" name="rating" type="number" value={values.rating} onChange={handleChange} /> */}
 
-            <TextField select fullWidth margin="normal" name="driver" value={values.driver} onChange={handleChange}>
+            <TextField select fullWidth margin="normal" type="text" label="Driver" name="driver" value={values.driver} onChange={handleChange}>
               <MenuItem value="With Driver">With Driver</MenuItem>
               <MenuItem value="No Driver">No Driver</MenuItem>
             </TextField>
 
-            <TextField select fullWidth margin="normal" name="insurance" value={values.insurance} onChange={handleChange}>
+            <TextField select fullWidth margin="normal" type="text" label="Insurance" name="insurance" value={values.insurance} onChange={handleChange}>
               <MenuItem value="With Insurance">With Insurance</MenuItem>
               <MenuItem value="No Insurance">No Insurance</MenuItem>
             </TextField>
 
-            <input type="file" onChange={(e) => setImage(e.target.files[0])} />
+                        <TextField select fullWidth margin="normal" type="text" label="RC Book" name="rc_book" value={values.rc_book} onChange={handleChange}>
+              <MenuItem value="With RC Book">With RC Book</MenuItem>
+              <MenuItem value="No RC Book">No RC Book</MenuItem>
+            </TextField>
+            <TextField select fullWidth margin="normal" type="text" label="PUC" name="puc" value={values.puc} onChange={handleChange}>
+              <MenuItem value="With PUC">With PUC</MenuItem>
+              <MenuItem value="No PUC">No PUC</MenuItem>
+            </TextField>
+            <TextField select fullWidth margin="normal" type="text" label="Driving License" name="driving_license" value={values.driving_license} onChange={handleChange}>
+              <MenuItem value="With Driving License">With Driving License</MenuItem>
+              <MenuItem value="No Driving License">No Driving License</MenuItem>
+            </TextField>
+            <input type="file" name="image" onChange={(e) => setImage(e.target.files[0])} />
 
             <Button type="submit" variant="contained" fullWidth sx={{ mt: 2 }}>
               {editId ? "Update Car" : "Add Car"}
@@ -238,6 +270,7 @@ const dataView = () => {
           <TableHead>
             <TableRow>
               <TableCell>Car</TableCell>
+              <TableCell>Owner</TableCell>
               <TableCell>Location</TableCell>
               <TableCell>Price</TableCell>
               <TableCell>Action</TableCell>
@@ -255,6 +288,7 @@ const dataView = () => {
     cars.map((c) => (
       <TableRow key={c._id}>
         <TableCell>{c.car_name}</TableCell>
+        <TableCell>{c.car_owner}</TableCell>
         <TableCell>{c.location}</TableCell>
         <TableCell>₹{c.price}</TableCell>
         <TableCell>
