@@ -15,7 +15,6 @@ const Booknow = ({ open, onClose, selectedCar, onConfirm, user }) => {
 
   const initialValues = {
     name: "",
-    // email: "",
     email: user?.email || "",
     mobile: "",
     pickup: "",
@@ -24,7 +23,6 @@ const Booknow = ({ open, onClose, selectedCar, onConfirm, user }) => {
   };
 
   const handleSubmit = (values, { resetForm }) => {
-    // ✅ Validation
     if (
       !values.name ||
       !values.email ||
@@ -36,32 +34,37 @@ const Booknow = ({ open, onClose, selectedCar, onConfirm, user }) => {
       alert("Please fill all details");
       return;
     }
+
     const startDate = new Date(values.pickup);
     const endDate = new Date(values.returnDate);
-    if (endDate <= startDate) {
+
+    if (endDate < startDate) {
       alert("Return date must be after pickup date");
       return;
     }
 
-
-    // ✅ Send booking data to Cars.jsx
+    // ✅ FINAL booking object (VERY IMPORTANT)
     onConfirm({
+      id: Date.now(),
       carId: selectedCar._id,
       car_name: selectedCar.car_name,
+
       userEmail: values.email,
       name: values.name,
       email: values.email,
       mobile: values.mobile,
-      price: selectedCar.price,
-      pickup: values.pickup,
+
+      price: Number(selectedCar.price),
+
+      startDate: values.pickup,       // ✅ REQUIRED
+      endDate: values.returnDate,     // ✅ REQUIRED
       pickupTime: values.pickupTime,
-      returnDate: values.returnDate,
-  endDate: values.returnDate,
-      paymentStatus: "Unpaid", // or "Paid"
-      paymentMode: "",          // Cash / Online
-     status: "Pending", // ✅ Correct flow
-       
-       waitingList: []
+
+      status: "Pending",
+      paymentStatus: "Unpaid",
+      paymentMode: "",
+
+      waitingList: [],
     });
 
     alert("Booking sent for approval");
@@ -143,7 +146,7 @@ const Booknow = ({ open, onClose, selectedCar, onConfirm, user }) => {
               />
 
               <Typography fontWeight="bold" mt={2}>
-                Total: ₹{selectedCar.price} / day
+                Price: ₹{selectedCar.price} / day
               </Typography>
             </DialogContent>
 

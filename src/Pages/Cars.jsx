@@ -257,6 +257,22 @@ const handleWaitingList = (car) => {
                               size={16}
                               color="gold"
                             />
+                              <Star
+                              size={16}
+                              color="gold"
+                            />
+                              <Star
+                              size={16}
+                              color="gold"
+                            />
+                              <Star
+                              size={16}
+                              color="gold"
+                            />
+                              <Star
+                              size={16}
+                              color="gold"
+                            />
                             <Typography>
                               {/* {car.rating} */}
                             </Typography>

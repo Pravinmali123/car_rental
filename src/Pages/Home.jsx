@@ -80,7 +80,7 @@ const Home = ({ user, onLogout }) => {
             sx={{
               p: { xs: 2, sm: 3 },
               borderRadius: 3,
-              maxWidth: 900,
+              maxWidth: 1000,
               mx: "auto",
             }}
           >
@@ -91,16 +91,17 @@ const Home = ({ user, onLogout }) => {
                   <LocationOnIcon fontSize="small" /> Pickup Location
                 </Typography>
                 <TextField
-                  select
+                  // select
+                  placeholder="Pikup Location"
                   fullWidth
                   size="small"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                 >
-                  <MenuItem value="">Select city</MenuItem>
+                  {/* <MenuItem value="">Select city</MenuItem>
                   <MenuItem value="Surat">SURAT</MenuItem>
                   <MenuItem value="Rajkot">RAJKOT</MenuItem>
-                  <MenuItem value="Mumbai">MUMBAI</MenuItem>
+                  <MenuItem value="Mumbai">MUMBAI</MenuItem> */}
                 </TextField>
               </Grid>
 
