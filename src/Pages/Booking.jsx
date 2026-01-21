@@ -14,7 +14,7 @@ const Booking = ({ user, onLogout }) => {
   const [processingId, setProcessingId] = useState(null);
   const { Razorpay } = useRazorpay();
 
-  // ✅ SAFE total days calculation
+  //  SAFE total days calculation
   const calculateDays = (start, end) => {
     if (!start || !end) return 1;
 
@@ -80,41 +80,41 @@ const Booking = ({ user, onLogout }) => {
 
   // Online payment
   const handleOnlinePayment = (id, totalPrice) => {
-    // setProcessingId(id);
+    setProcessingId(id);
 
-    // const options = {
-    //   key: "rzp_test_S5iwtFr5Ws0PGC",
-    //   amount: totalPrice * 100,
-    //   currency: "INR",
-    //   name: "Car Rental",
-    //   description: "Car Booking Payment",
+    const options = {
+      key: "rzp_test_S5iwtFr5Ws0PGC",
+      amount: totalPrice * 100,
+      currency: "INR",
+      name: "Car Rental",
+      description: "Car Booking Payment",
 
-    //   handler: () => {
-    //     const all =
-    //       JSON.parse(localStorage.getItem("bookings")) || [];
+      handler: () => {
+        const all =
+          JSON.parse(localStorage.getItem("bookings")) || [];
 
-    //     const updated = all.map((b) =>
-    //       b.id === id
-    //         ? {
-    //             ...b,
-    //             paymentStatus: "Paid",
-    //             paymentMode: "Online",
-    //           }
-    //         : b
-    //     );
+        const updated = all.map((b) =>
+          b.id === id
+            ? {
+                ...b,
+                paymentStatus: "Paid",
+                paymentMode: "Online",
+              }
+            : b
+        );
 
-    //     localStorage.setItem("bookings", JSON.stringify(updated));
-    //     setBookings(updated.filter((b) => b.userEmail === user.email));
-    //     setProcessingId(null);
-    //   },
+        localStorage.setItem("bookings", JSON.stringify(updated));
+        setBookings(updated.filter((b) => b.userEmail === user.email));
+        setProcessingId(null);
+      },
 
-    //   modal: {
-    //     ondismiss: () => setProcessingId(null),
-    //   },
-    // };
+      modal: {
+        ondismiss: () => setProcessingId(null),
+      },
+    };
 
-    // const rzp = new Razorpay(options);
-    // rzp.open();
+    const rzp = new Razorpay(options);
+    rzp.open();
   };
 
   return (
